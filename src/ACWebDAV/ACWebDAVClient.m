@@ -168,10 +168,15 @@
 			[self.delegate client:self downloadedFileData:data];
 		}
 	} else {
-		[data writeToFile:path atomically:YES];
-		if([self.delegate respondsToSelector:@selector(client:downloadedFile:)]) {
-			[self.delegate client:self downloadedFile:path];
-		}
+		if ([data writeToFile:path atomically:YES]) {
+            if([self.delegate respondsToSelector:@selector(client:downloadedFile:)]) {
+                [self.delegate client:self downloadedFile:path];
+            }
+        } else {
+            if ([self.delegate respondsToSelector:@selector(client:downloadFileFailedWithError:)]) {
+                [self.delegate client:self downloadFileFailedWithError:nil];
+            }
+        }
 	}
 }
 
