@@ -39,6 +39,7 @@ typedef enum {
 } ACWebDAVProperties;
 
 static const NSUInteger ACWebDAVInfinityDepth = 4294967295;
+static const NSUInteger limitLoopRequest = 10;
 
 @class ACWebDAVLocation;
 @interface ACWebDAVPropertyRequest : NSObject {
@@ -46,6 +47,7 @@ static const NSUInteger ACWebDAVInfinityDepth = 4294967295;
 	ACWebDAVProperties properties;
 	ACWebDAVLocation* location;
 	NSUInteger depth;
+    int loopProblem;
 	id<ACWebDAVPropertyRequestDelegate> delegate;
 }
 

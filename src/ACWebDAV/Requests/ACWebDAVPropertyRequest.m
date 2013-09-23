@@ -17,6 +17,7 @@
 -(id)init {
 	if(self = [super init]) {
 		depth = 0;
+        loopProblem = 0;
 		self.receivedData = [NSMutableData data];
 		self.properties = ACWebDAVPropertyAllProperties;
 	}
@@ -41,6 +42,7 @@
 }
 
 -(void)start {
+    loopProblem = 0;
 	[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 	NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:self.location.url];
 	[request setHTTPMethod:@"PROPFIND"];
@@ -96,14 +98,30 @@
 	return [o dataUsingEncoding:NSUTF8StringEncoding];
 }
 
+
 - (void)connection:(NSURLConnection *)connection willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    [[challenge sender] useCredential:[NSURLCredential
-                                      credentialWithUser:self.location.username
-                                      password:self.location.password
-                                      persistence:NSURLCredentialPersistencePermanent] forAuthenticationChallenge:challenge];
+    if (loopProblem > limitLoopRequest) {
+        self.location.username = @"";
+        self.location.password = @"";
+        [self.delegate request:self didFailWithErrorCode:501];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        [connection cancel];
+        [connection release];
+        loopProblem = 0;
+    } else {
+        loopProblem++;
+        [[challenge sender] useCredential:[NSURLCredential
+                                           credentialWithUser:self.location.username
+                                           password:self.location.password
+                                           persistence:NSURLCredentialPersistencePermanent] forAuthenticationChallenge:challenge];
+    }
 }
-
+/*
+-(NSURLRequest*)connection:(NSURLConnection*)connection willSendRequest:(NSURLRequest*)request redirectResponse:(NSURLResponse*)redirectResponse {
+	return request;
+}
+*/
 -(void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
 	if([challenge previousFailureCount] == 0) {
 		NSURLCredential *newCredential;
