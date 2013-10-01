@@ -189,7 +189,7 @@
     
     nodePool = NULL;
     //
-    xmlFreeDoc((xmlDocPtr)_node);
+//    xmlFreeDoc((xmlDocPtr)_node);
     _node = NULL;
     //
 }
@@ -250,6 +250,7 @@
     xmlFree(xmlbuff);
     
     [result appendString:dump];
+    [dump release];
     return result;
 }
 

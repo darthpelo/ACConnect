@@ -163,7 +163,7 @@
 
 - (NSArray *)namespaces
     {
-	NSMutableArray *theNamespaces = [[NSMutableArray alloc] init];
+	NSMutableArray *theNamespaces = [NSMutableArray init];
 	xmlNsPtr theCurrentNamespace = _node->nsDef;
 	
 	while (theCurrentNamespace != NULL)
